@@ -1,0 +1,22 @@
+FROM node:20-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy application code
+COPY src/ ./src/
+
+# Create logs directory
+RUN mkdir -p /app/logs
+
+# Set non-root user
+USER node
+
+# Start worker service
+CMD ["node", "src/worker/index.js"]
