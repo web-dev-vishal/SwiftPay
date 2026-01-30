@@ -1,0 +1,76 @@
+swiftpay/
+├── docker/
+│   ├── Dockerfile.gateway
+│   ├── Dockerfile.worker
+│   ├── mongo-init.js
+│   └── rabbitmq.conf
+│
+├── logs/                           # Created automatically
+│   ├── combined.log
+│   ├── error.log
+│   ├── exceptions.log
+│   └── rejections.log
+│
+├── src/
+│   ├── config/
+│   │   ├── database.js             # MongoDB connection
+│   │   ├── rabbitmq.js             # RabbitMQ connection
+│   │   ├── redis.js                # Redis connection
+│   │   └── websocket.js            # WebSocket server
+│   │
+│   ├── models/
+│   │   ├── Transaction.js          # Transaction schema
+│   │   ├── User.js                 # User schema
+│   │   └── AuditLog.js             # Audit log schema
+│   │
+│   ├── services/
+│   │   ├── DistributedLock.js      # Redis distributed lock
+│   │   ├── RedisBalanceService.js  # Balance management
+│   │   ├── MessagePublisher.js     # RabbitMQ publisher
+│   │   ├── MessageConsumer.js      # RabbitMQ consumer
+│   │   └── PayoutService.js        # Payout business logic (TO BE CREATED)
+│   │
+│   ├── middleware/
+│   │   ├── errorHandler.js         # Error handling middleware
+│   │   ├── validation.js           # Validation middleware
+│   │   └── rateLimiter.js          # Rate limiting middleware
+│   │
+│   ├── validators/
+│   │   └── payout.validator.js     # Payout request validator
+│   │
+│   ├── controllers/
+│   │   └── payout.controller.js    # Payout API controller (TO BE CREATED)
+│   │
+│   ├── routes/
+│   │   ├── index.js                # Main router (TO BE CREATED)
+│   │   ├── payout.routes.js        # Payout routes (TO BE CREATED)
+│   │   └── health.routes.js        # Health check routes (TO BE CREATED)
+│   │
+│   ├── utils/
+│   │   ├── logger.js               # Winston logger
+│   │   └── helpers.js              # Helper functions (TO BE CREATED)
+│   │
+│   ├── gateway/
+│   │   └── index.js                # API Gateway entry point (TO BE CREATED)
+│   │
+│   └── worker/
+│       └── index.js                # Worker service entry point (TO BE CREATED)
+│
+├── tests/                          # Test files (OPTIONAL - TO BE CREATED)
+│   ├── unit/
+│   │   ├── services/
+│   │   ├── models/
+│   │   └── utils/
+│   └── integration/
+│       ├── payout.test.js
+│       └── worker.test.js
+│
+├── .env                            # Environment variables (create from .env.example)
+├── .env.example                    # Environment variables template
+├── .gitignore                      # Git ignore file (TO BE CREATED)
+├── .dockerignore                   # Docker ignore file (TO BE CREATED)
+├── docker-compose.yml              # Docker compose configuration
+├── package.json                    # NPM dependencies
+├── package-lock.json               # NPM lock file (auto-generated)
+├── README.md                       # Project documentation (TO BE CREATED)
+└── .eslintrc.json                  # ESLint configuration (OPTIONAL - TO BE CREATED)
