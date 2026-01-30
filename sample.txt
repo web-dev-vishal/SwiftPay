@@ -1,11 +1,34 @@
+module.exports = {
+  testEnvironment: 'node',
+  coverageDirectory: 'coverage',
+  collectCoverageFrom: [
+    'src/**/*.js',
+    '!src/**/index.js',
+    '!**/node_modules/**',
+  ],
+  testMatch: [
+    '**/tests/**/*.test.js',
+  ],
+  verbose: true,
+  forceExit: true,
+  clearMocks: true,
+  resetMocks: true,
+  restoreMocks: true,
+};
+```
+
+---
+
+## Final Complete File Structure
+```
 swiftpay/
 ├── docker/
-│   ├── Dockerfile.gateway
-│   ├── Dockerfile.worker
-│   ├── mongo-init.js
-│   └── rabbitmq.conf
+│   ├── Dockerfile.gateway          ✅
+│   ├── Dockerfile.worker            ✅
+│   ├── mongo-init.js                ✅
+│   └── rabbitmq.conf                ✅
 │
-├── logs/                           # Created automatically
+├── logs/                            ✅ (auto-created)
 │   ├── combined.log
 │   ├── error.log
 │   ├── exceptions.log
@@ -13,64 +36,61 @@ swiftpay/
 │
 ├── src/
 │   ├── config/
-│   │   ├── database.js             # MongoDB connection
-│   │   ├── rabbitmq.js             # RabbitMQ connection
-│   │   ├── redis.js                # Redis connection
-│   │   └── websocket.js            # WebSocket server
+│   │   ├── database.js              ✅
+│   │   ├── rabbitmq.js              ✅
+│   │   ├── redis.js                 ✅
+│   │   └── websocket.js             ✅
 │   │
 │   ├── models/
-│   │   ├── Transaction.js          # Transaction schema
-│   │   ├── User.js                 # User schema
-│   │   └── AuditLog.js             # Audit log schema
+│   │   ├── Transaction.js           ✅
+│   │   ├── User.js                  ✅
+│   │   └── AuditLog.js              ✅
 │   │
 │   ├── services/
-│   │   ├── DistributedLock.js      # Redis distributed lock
-│   │   ├── RedisBalanceService.js  # Balance management
-│   │   ├── MessagePublisher.js     # RabbitMQ publisher
-│   │   ├── MessageConsumer.js      # RabbitMQ consumer
-│   │   └── PayoutService.js        # Payout business logic (TO BE CREATED)
+│   │   ├── DistributedLock.js       ✅
+│   │   ├── RedisBalanceService.js   ✅
+│   │   ├── MessagePublisher.js      ✅
+│   │   ├── MessageConsumer.js       ✅
+│   │   └── PayoutService.js         ✅
 │   │
 │   ├── middleware/
-│   │   ├── errorHandler.js         # Error handling middleware
-│   │   ├── validation.js           # Validation middleware
-│   │   └── rateLimiter.js          # Rate limiting middleware
+│   │   ├── errorHandler.js          ✅
+│   │   ├── validation.js            ✅
+│   │   └── rateLimiter.js           ✅
 │   │
 │   ├── validators/
-│   │   └── payout.validator.js     # Payout request validator
+│   │   └── payout.validator.js      ✅
 │   │
 │   ├── controllers/
-│   │   └── payout.controller.js    # Payout API controller (TO BE CREATED)
+│   │   └── payout.controller.js     ✅
 │   │
 │   ├── routes/
-│   │   ├── index.js                # Main router (TO BE CREATED)
-│   │   ├── payout.routes.js        # Payout routes (TO BE CREATED)
-│   │   └── health.routes.js        # Health check routes (TO BE CREATED)
+│   │   ├── index.js                 ✅
+│   │   ├── payout.routes.js         ✅
+│   │   └── health.routes.js         ✅
 │   │
 │   ├── utils/
-│   │   ├── logger.js               # Winston logger
-│   │   └── helpers.js              # Helper functions (TO BE CREATED)
+│   │   ├── logger.js                ✅
+│   │   └── helpers.js               ✅
 │   │
 │   ├── gateway/
-│   │   └── index.js                # API Gateway entry point (TO BE CREATED)
+│   │   └── index.js                 ✅
 │   │
 │   └── worker/
-│       └── index.js                # Worker service entry point (TO BE CREATED)
+│       └── index.js                 ✅
 │
-├── tests/                          # Test files (OPTIONAL - TO BE CREATED)
+├── tests/
 │   ├── unit/
-│   │   ├── services/
-│   │   ├── models/
-│   │   └── utils/
+│   │   └── services/
+│   │       └── DistributedLock.test.js  ✅
 │   └── integration/
-│       ├── payout.test.js
-│       └── worker.test.js
+│       └── payout.test.js           ✅
 │
-├── .env                            # Environment variables (create from .env.example)
-├── .env.example                    # Environment variables template
-├── .gitignore                      # Git ignore file (TO BE CREATED)
-├── .dockerignore                   # Docker ignore file (TO BE CREATED)
-├── docker-compose.yml              # Docker compose configuration
-├── package.json                    # NPM dependencies
-├── package-lock.json               # NPM lock file (auto-generated)
-├── README.md                       # Project documentation (TO BE CREATED)
-└── .eslintrc.json                  # ESLint configuration (OPTIONAL - TO BE CREATED)
+├── .env.example                     ✅
+├── .gitignore                       ✅
+├── .dockerignore                    ✅
+├── .eslintrc.json                   ✅
+├── docker-compose.yml               ✅
+├── package.json                     ✅
+├── jest.config.js                   ✅
+└── README.md                        ✅
