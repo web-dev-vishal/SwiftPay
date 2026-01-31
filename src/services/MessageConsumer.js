@@ -1,95 +1,130 @@
 const logger = require('../utils/logger');
 
-class MessagePublisher {
-  constructor(channel) {
+class MessageConsumer {
+  constructor(channel, handler) {
     this.channel = channel;
+    this.handler = handler;
+    this.consumerTag = null;
   }
 
-  async publishPayoutMessage(payload) {
+  async startConsuming(queueName = 'payout_queue') {
     try {
-      const message = {
-        transactionId: payload.transactionId,
-        userId: payload.userId,
-        amount: payload.amount,
-        currency: payload.currency,
-        metadata: payload.metadata,
-        timestamp: new Date().toISOString(),
-      };
+      const { consumerTag } = await this.channel.consume(
+        queueName,
+        async (msg) => {
+          if (msg === null) {
+            logger.warn('Consumer cancelled by server');
+            return;
+          }
 
-      const sent = this.channel.sendToQueue(
-        'payout_queue',
-        Buffer.from(JSON.stringify(message)),
+          await this.handleMessage(msg);
+        },
         {
-          persistent: true,
-          contentType: 'application/json',
-          messageId: payload.transactionId,
-          timestamp: Date.now(),
-          headers: {
-            'x-retry-count': 0,
-            'x-source': 'api-gateway',
-          },
+          noAck: false,
         }
       );
 
-      if (sent) {
-        logger.info(`Message published to payout_queue`, {
-          transactionId: payload.transactionId,
-          userId: payload.userId,
-        });
-        return true;
-      } else {
-        logger.error('Failed to publish message - queue buffer full');
-        return false;
-      }
+      this.consumerTag = consumerTag;
+      logger.info(`Started consuming messages from ${queueName}`, {
+        consumerTag,
+      });
 
     } catch (error) {
-      logger.error('Error publishing message to RabbitMQ:', error);
+      logger.error('Error starting consumer:', error);
       throw error;
     }
   }
 
-  async publishWithConfirmation(payload) {
-    try {
-      await this.channel.confirmSelect();
+  async handleMessage(msg) {
+    const startTime = Date.now();
+    let payload;
 
-      const message = {
+    try {
+      payload = JSON.parse(msg.content.toString());
+      
+      logger.info('Processing message', {
         transactionId: payload.transactionId,
         userId: payload.userId,
-        amount: payload.amount,
-        currency: payload.currency,
-        metadata: payload.metadata,
-        timestamp: new Date().toISOString(),
-      };
+        retryCount: msg.properties.headers['x-retry-count'] || 0,
+      });
 
-      return new Promise((resolve, reject) => {
-        this.channel.sendToQueue(
-          'payout_queue',
-          Buffer.from(JSON.stringify(message)),
-          {
-            persistent: true,
-            contentType: 'application/json',
-            messageId: payload.transactionId,
-            timestamp: Date.now(),
-          },
-          (err, ok) => {
-            if (err) {
-              logger.error('Message publish confirmation failed:', err);
-              reject(err);
-            } else {
-              logger.info('Message publish confirmed', {
-                transactionId: payload.transactionId,
-              });
-              resolve(true);
-            }
-          }
-        );
+      await this.handler(payload, msg);
+
+      this.channel.ack(msg);
+
+      const processingTime = Date.now() - startTime;
+      logger.info('Message processed successfully', {
+        transactionId: payload.transactionId,
+        processingTimeMs: processingTime,
       });
 
     } catch (error) {
-      logger.error('Error publishing message with confirmation:', error);
+      const processingTime = Date.now() - startTime;
+      logger.error('Error processing message:', {
+        error: error.message,
+        transactionId: payload?.transactionId,
+        processingTimeMs: processingTime,
+      });
+
+      await this.handleFailure(msg, error, payload);
+    }
+  }
+
+  async handleFailure(msg, error, payload) {
+    try {
+      const retryCount = (msg.properties.headers['x-retry-count'] || 0) + 1;
+      const maxRetries = parseInt(process.env.MAX_RETRY_ATTEMPTS) || 3;
+
+      if (retryCount <= maxRetries) {
+        logger.warn(`Requeuing message (attempt ${retryCount}/${maxRetries})`, {
+          transactionId: payload?.transactionId,
+        });
+
+        this.channel.nack(msg, false, false);
+
+        setTimeout(() => {
+          this.channel.sendToQueue(
+            'payout_queue',
+            msg.content,
+            {
+              ...msg.properties,
+              headers: {
+                ...msg.properties.headers,
+                'x-retry-count': retryCount,
+              },
+            }
+          );
+        }, parseInt(process.env.RETRY_DELAY_MS) || 5000);
+
+      } else {
+        logger.error('Max retries reached - sending to DLQ', {
+          transactionId: payload?.transactionId,
+          retryCount,
+        });
+
+        this.channel.nack(msg, false, false);
+      }
+
+    } catch (error) {
+      logger.error('Error handling message failure:', error);
+      this.channel.nack(msg, false, false);
+    }
+  }
+
+  async stopConsuming() {
+    try {
+      if (this.consumerTag) {
+        await this.channel.cancel(this.consumerTag);
+        logger.info('Stopped consuming messages', {
+          consumerTag: this.consumerTag,
+        });
+        this.consumerTag = null;
+      }
+    } catch (error) {
+      logger.error('Error stopping consumer:', error);
       throw error;
     }
   }
 }
 
-module.exports = MessagePublisher;
+module.exports = MessageConsumer;
