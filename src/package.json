@@ -6,7 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "Node",
+    "express",
+    "payout",
+    "rabbitmq",
+    "redis",
+    "mongodb",
+    "websocket",
+    "microservices"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
