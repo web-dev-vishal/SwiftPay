@@ -49,6 +49,4 @@ const payoutRequestSchema = Joi.object({
     }),
 });
 
-module.exports = {
-  payoutRequestSchema,
-};
+module.exports = { payoutRequestSchema };
