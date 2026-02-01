@@ -10,9 +10,9 @@
     "dev:worker": "nodemon src/worker/index.js",
     "test": "jest --coverage",
     "lint": "eslint src/",
-    "docker:up": "docker-compose up -d",
+    "docker:up": "docker-compose up ",
     "docker:down": "docker-compose down",
-    "docker:logs": "docker-compose logs -f",
+    "docker:logs": "docker-compose logs ",
     "docker:rebuild": "docker-compose up -d --build"
   },
   "keywords": [
