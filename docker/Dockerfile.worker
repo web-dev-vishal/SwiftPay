@@ -12,8 +12,8 @@ RUN npm install --omit=dev
 # Copy application code
 COPY src/ ./src/
 
-# Create logs directory
-RUN mkdir -p /app/logs
+# Create logs directory with proper permissions
+RUN mkdir -p /app/logs && chown -R node:node /app
 
 # Set non-root user
 USER node
