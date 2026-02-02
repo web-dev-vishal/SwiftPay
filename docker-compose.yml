@@ -1,7 +1,4 @@
-version: '3.8'
-
 services:
-  # MongoDB Database
   mongodb:
     image: mongo:7.0
     container_name: swiftpay_mongodb
@@ -24,7 +21,6 @@ services:
       retries: 5
       start_period: 40s
 
-  # Mongo Express - MongoDB Admin UI
   mongo-express:
     image: mongo-express:1.0.2
     container_name: swiftpay_mongo_express
@@ -43,7 +39,6 @@ services:
       mongodb:
         condition: service_healthy
 
-  # Redis - Caching and Distributed Locking
   redis:
     image: redis:7.2-alpine
     container_name: swiftpay_redis
@@ -62,7 +57,6 @@ services:
       retries: 5
       start_period: 20s
 
-  # RabbitMQ - Message Broker
   rabbitmq:
     image: rabbitmq:3.12-management-alpine
     container_name: swiftpay_rabbitmq
@@ -72,8 +66,8 @@ services:
       RABBITMQ_DEFAULT_PASS: SwiftPay@RabbitMQ2024
       RABBITMQ_DEFAULT_VHOST: swiftpay_vhost
     ports:
-      - "5672:5672"    # AMQP protocol
-      - "15672:15672"  # Management UI
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
       - ./docker/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
@@ -86,7 +80,6 @@ services:
       retries: 5
       start_period: 30s
 
-  # API Gateway - Express Application
   api-gateway:
     build:
       context: .
@@ -126,7 +119,6 @@ services:
       retries: 3
       start_period: 40s
 
-  # Worker Service - Message Consumer
   worker-service:
     build:
       context: .
@@ -155,15 +147,6 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    deploy:
-      replicas: 2
-      resources:
-        limits:
-          cpus: '1'
-          memory: 512M
-        reservations:
-          cpus: '0.5'
-          memory: 256M
 
 networks:
   swiftpay_network:
