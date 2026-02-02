@@ -4,8 +4,6 @@
   "description": "",
   "main": "src/gateway/index.js",
   "scripts": {
-    "start:gateway": "node src/gateway/index.js",
-    "start:worker": "node src/worker/index.js",
     "dev:gateway": "nodemon src/gateway/index.js",
     "dev:worker": "nodemon src/worker/index.js",
     "test": "jest --coverage",
