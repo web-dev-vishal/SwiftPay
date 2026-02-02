@@ -23,7 +23,7 @@ module.exports = {
 ```
 swiftpay/
 ├── docker/
-│   ├── Dockerfile.gateway          ✅
+│   ├── Dockerfile.gateway           ✅
 │   ├── Dockerfile.worker            ✅
 │   ├── mongo-init.js                ✅
 │   └── rabbitmq.conf                ✅
