@@ -1,7 +1,7 @@
 {
   "name": "swiftpay",
   "version": "1.0.0",
-  "description": "",
+  "description": "swiftpay Backend",
   "main": "src/gateway/index.js",
   "scripts": {
     "dev:gateway": "nodemon src/gateway/index.js",
