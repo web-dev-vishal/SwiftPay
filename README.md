@@ -38,7 +38,7 @@ SwiftPay is a microservices-based payment processing system with the following c
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/swiftpay.git
+git clone https://github.com/web-dev-vishal/SwiftPay
 cd swiftpay
 ```
 
