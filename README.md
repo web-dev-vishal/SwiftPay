@@ -181,20 +181,48 @@ npm run lint
 ```
 swiftpay/
 ├── docker/                  # Docker configuration files
+│   ├── Dockerfile.gateway   # API Gateway Dockerfile
+│   ├── Dockerfile.worker    # Worker Service Dockerfile
+│   └── mongo-init.js        # MongoDB initialization script
 ├── src/
 │   ├── config/             # Database, Redis, RabbitMQ, WebSocket configs
+│   │   ├── database.js
+│   │   ├── redis.js
+│   │   ├── rabbitmq.js
+│   │   └── websocket.js
 │   ├── models/             # MongoDB models
+│   │   ├── Transaction.js
+│   │   ├── User.js
+│   │   └── AuditLog.js
 │   ├── services/           # Business logic services
+│   │   ├── lockService.js
+│   │   ├── balanceService.js
+│   │   ├── payoutService.js
+│   │   └── notificationService.js
 │   ├── middleware/         # Express middleware
+│   │   ├── errorHandler.js
+│   │   ├── rateLimiter.js
+│   │   └── validator.js
 │   ├── validators/         # Request validation schemas
+│   │   └── payoutValidator.js
 │   ├── controllers/        # Route controllers
+│   │   ├── payoutController.js
+│   │   └── healthController.js
 │   ├── routes/             # API routes
+│   │   ├── payoutRoutes.js
+│   │   └── healthRoutes.js
 │   ├── utils/              # Utility functions
+│   │   ├── logger.js
+│   │   ├── idGenerator.js
+│   │   └── constants.js
 │   ├── gateway/            # API Gateway entry point
+│   │   └── server.js
 │   └── worker/             # Worker service entry point
+│       └── worker.js
 ├── logs/                   # Application logs
 ├── tests/                  # Test files
 ├── .env.example            # Environment variables template
+├── .gitignore              # Git ignore file
 ├── docker-compose.yml      # Docker services configuration
 ├── package.json            # NPM dependencies
 └── README.md              # This file
@@ -292,6 +320,64 @@ Check MongoDB and Redis data:
 - Add API key validation
 - Enable CORS properly
 
+## Environment Variables
+
+### Application Settings
+- `NODE_ENV`: Environment (development/production)
+- `API_PORT`: API Gateway port (default: 3000)
+- `WORKER_INSTANCES`: Number of worker instances
+
+### MongoDB Settings
+- `MONGODB_URI`: MongoDB connection string
+- `MONGODB_USER`: MongoDB username
+- `MONGODB_PASSWORD`: MongoDB password
+
+### Redis Settings
+- `REDIS_HOST`: Redis host
+- `REDIS_PORT`: Redis port
+- `REDIS_PASSWORD`: Redis password
+- `REDIS_DB`: Redis database number
+
+### RabbitMQ Settings
+- `RABBITMQ_URL`: RabbitMQ connection URL
+- `RABBITMQ_USER`: RabbitMQ username
+- `RABBITMQ_PASSWORD`: RabbitMQ password
+- `RABBITMQ_QUEUE`: Queue name
+- `RABBITMQ_EXCHANGE`: Exchange name
+- `RABBITMQ_ROUTING_KEY`: Routing key
+
+### Rate Limiting
+- `RATE_LIMIT_WINDOW_MS`: Rate limit window in milliseconds
+- `RATE_LIMIT_MAX_REQUESTS`: Maximum requests per window
+- `USER_RATE_LIMIT_MAX_REQUESTS`: Maximum requests per user
+
+### Lock Settings
+- `LOCK_TTL_MS`: Lock time-to-live in milliseconds
+- `LOCK_RETRY_DELAY_MS`: Lock retry delay
+- `LOCK_RETRY_COUNT`: Maximum lock retry attempts
+
+### Payout Processing
+- `PAYOUT_PROCESSING_DELAY_MS`: Simulated processing delay
+- `MAX_PAYOUT_AMOUNT`: Maximum payout amount
+- `MIN_PAYOUT_AMOUNT`: Minimum payout amount
+
+## Testing
+
+### Unit Tests
+```bash
+npm test
+```
+
+### Integration Tests
+```bash
+npm run test:integration
+```
+
+### Coverage Report
+```bash
+npm run test:coverage
+```
+
 ## License
 
 MIT
@@ -299,16 +385,24 @@ MIT
 ## Support
 
 For issues and questions:
-- GitHub Issues: https://github.com/yourusername/swiftpay/issues
+- GitHub Issues: https://github.com/web-dev-vishal/SwiftPay/issues
 - Email: support@swiftpay.com
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+### Contribution Guidelines
+
+- Follow the existing code style
+- Write tests for new features
+- Update documentation as needed
+- Ensure all tests pass before submitting PR
+- Keep commits atomic and descriptive
 
 ## Authors
 
@@ -319,3 +413,29 @@ For issues and questions:
 - Built with Node.js and Express
 - Powered by MongoDB, Redis, and RabbitMQ
 - Real-time updates with Socket.IO
+- Inspired by modern payment processing systems
+
+## Changelog
+
+### Version 1.0.0 (Current)
+- Initial release
+- Core payout processing functionality
+- Distributed locking mechanism
+- Real-time WebSocket notifications
+- Rate limiting and security features
+- Docker containerization
+- Comprehensive error handling
+- Audit logging
+
+## Roadmap
+
+- [ ] Add support for multiple currencies
+- [ ] Implement webhook notifications
+- [ ] Add advanced fraud detection
+- [ ] Support scheduled payouts
+- [ ] Implement batch processing
+- [ ] Add GraphQL API
+- [ ] Implement OAuth2 authentication
+- [ ] Add Prometheus metrics
+- [ ] Implement circuit breaker pattern
+- [ ] Add support for refunds and reversals
